@@ -1,44 +1,46 @@
 import { useState, useEffect } from "react";
 
-type Forecast = {
-  date: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
+type TodoItem = {
+  id: number;
+  name: string;
+  isDone: boolean;
 };
 
 export const FetchData = () => {
-  const [forecasts, setForecasts] = useState<Forecast[]>([]);
+  const [todos, setTodos] = useState<TodoItem[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function fetchForecastData() {
-      const response = await fetch("weatherforecast");
-      const data = await response.json();
-      setForecasts(data);
-      setLoading(false);
+    console.log("hello");
+
+    async function fetchTodoData() {
+      try {
+        const response = await fetch("https://localhost:44451/api/todo");
+        const data = await response.json();
+        setTodos(data);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
     }
-    fetchForecastData();
+    fetchTodoData();
   }, []);
 
-  const renderForecastsTable = () => {
+  const renderTodoTable = () => {
     return (
       <table className="table table-striped" aria-labelledby="tabelLabel">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
+            <th>ID</th>
+            <th>タイトル</th>
+            <th>完了</th>
           </tr>
         </thead>
         <tbody>
-          {forecasts.map((forecast) => (
-            <tr key={forecast.date}>
-              <td>{forecast.date}</td>
-              <td>{forecast.temperatureC}</td>
-              <td>{forecast.temperatureF}</td>
-              <td>{forecast.summary}</td>
+          {todos.map((todo) => (
+            <tr key={todo.id}>
+              <td>{todo.name}</td>
+              <td>{todo.isDone}</td>
             </tr>
           ))}
         </tbody>
@@ -48,9 +50,9 @@ export const FetchData = () => {
 
   return (
     <div>
-      <h1 id="tabelLabel">Weather forecast</h1>
+      <h1 id="tabelLabel">Todoリスト</h1>
       <p>サーバーからデータを取得するコンポーネントのサンプル</p>
-      {loading ? <p>Loading...</p> : renderForecastsTable()}
+      {loading ? <p>Loading...</p> : renderTodoTable()}
     </div>
   );
 };
