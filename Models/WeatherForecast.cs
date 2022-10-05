@@ -1,4 +1,4 @@
-namespace todo_react_app;
+namespace todo_react_app.Models;
 
 public class WeatherForecast
 {
