@@ -14,42 +14,19 @@ public class TodoController : ControllerBase
     _logger = logger;
   }
 
-  // public List<TodoItem> Get()
-  // {
-  //   var todoList = new List<TodoItem>();
-
-  //   todoList.Add(
-  //     new TodoItem
-  //     {
-  //       Id = 1, 
-  //       Name = "プログラミング", 
-  //       IsDone = false
-  //     });
-
-  //   return todoList;
-  // }
-
   [HttpGet]
-  public IEnumerable<TodoItem> Get()
+  public List<TodoItem> Get()
   {
-      return Enumerable.Range(1, 5).Select(index => new TodoItem
+    var todoList = new List<TodoItem>();
+
+    todoList.Add(
+      new TodoItem
       {
         Id = 1, 
         Name = "プログラミング", 
         IsDone = false
-      })
-      .ToArray();
+      });
+
+    return todoList;
   }
-
-  // [Route("form")]
-  // [HttpPost]
-  // public ActionResult<TodoItem> Form([FromBody] Object model)
-  // {
-  //   if (!ModelState.IsValid)
-  //   {
-  //     return BadRequest(ModelState);
-  //   }
-
-  //   return Ok(new TodoItem(){ Content = "成功！！" });
-  // }
 }

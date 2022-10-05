@@ -11,11 +11,9 @@ export const FetchData = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("hello");
-
     async function fetchTodoData() {
       try {
-        const response = await fetch("https://localhost:44451/api/todo");
+        const response = await fetch("api/todo");
         const data = await response.json();
         setTodos(data);
         setLoading(false);
@@ -39,6 +37,7 @@ export const FetchData = () => {
         <tbody>
           {todos.map((todo) => (
             <tr key={todo.id}>
+              <td>{todo.id}</td>
               <td>{todo.name}</td>
               <td>{todo.isDone}</td>
             </tr>
@@ -49,10 +48,12 @@ export const FetchData = () => {
   };
 
   return (
-    <div>
-      <h1 id="tabelLabel">Todoリスト</h1>
-      <p>サーバーからデータを取得するコンポーネントのサンプル</p>
-      {loading ? <p>Loading...</p> : renderTodoTable()}
-    </div>
+    <>
+      <div>
+        <h1 id="tabelLabel">Todoリスト</h1>
+        <p>サーバーからデータを取得するコンポーネントのサンプル</p>
+        {loading ? <p>Loading...</p> : renderTodoTable()}
+      </div>
+    </>
   );
 };
