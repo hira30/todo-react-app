@@ -1,14 +1,9 @@
-import React, { Component } from 'react';
-import { Todo } from './Todo/Todo';
+import { Todo } from "./Todo/Todo";
 
-export class Home extends Component {
-  static displayName = Home.name;
-
-  render () {
-    return (
-      <>
-        <Todo />
-      </>
-    );
-  }
-}
+export const Home = () => {
+  return (
+    <>
+      <Todo />
+    </>
+  );
+};

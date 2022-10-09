@@ -24,7 +24,7 @@ public class TodoController : ControllerBase
       {
         Id = 1, 
         Name = "プログラミング", 
-        IsDone = false
+        IsComplete = false
       });
 
     return todoList;
