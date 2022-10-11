@@ -96,6 +96,7 @@ namespace todo_react_app.Controllers
             {
                 return NotFound();
             }
+
             var todoItem = await _context.TodoItem.FindAsync(id);
             if (todoItem == null)
             {
