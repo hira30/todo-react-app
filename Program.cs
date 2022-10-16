@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using todo_react_app.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// builder.Services.AddDbContext<TodoContext>(options =>
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("TodoContext") ??
+//     throw new InvalidOperationException("Connection string 'TodoContext' not found.")));
 builder.Services.AddDbContext<TodoContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("TodoContext") ?? 
-    throw new InvalidOperationException("Connection string 'TodoContext' not found.")));
+        options.UseSqlite(builder.Configuration.GetConnectionString("TodoContext")));
 
 var app = builder.Build();
 

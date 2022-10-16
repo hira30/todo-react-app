@@ -10,27 +10,39 @@ export const Todo = () => {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState("");
+  const [editMode, setEditMode] = useState(false);
 
-  // 追加ボタンクリック時
-  const handleAdd = () => {
-    setTodos([...todos, {id: 5, name:text, isComplete: false}])
+  // Todoの追加ボタンクリック時
+  const handleClickAdd = () => {
+    const newId = todos.length + 1;
+    setTodos([...todos, { id: newId, name: text, isComplete: false }]);
     setText("");
-  }
+  };
 
-  // テキストボックス
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  // Todoの追加テキストボックス変更時
+  const handleChangeAdd = (e: ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
-  }
+  };
 
-  // Todo名を変更したときのイベント
-  const handleEdit = () => {
+  // Todo名をクリックすると編集モードに
+  const handleClickName = () => {
+    setEditMode(true);
+  };
+
+  // Todo名を変更時
+  const handleChangeName = () => {
     console.log(`変更されたID:`);
+  };
+
+  // 保存ボタンクリック時（サーバー側にPOST）
+  const handleSave = () => {
+
   }
 
-  // 完了ボタンをクリックされたら削除する
+  // 削除ボタンクリック（サーバー側にPOST）
   const handleDelete = () => {
-    console.log(`変更されたID:`);
-  }
+    console.log(`ID:`);
+  };
 
   // ページ表示時にWeb APIからデータを取得する
   useEffect(() => {
@@ -61,22 +73,19 @@ export const Todo = () => {
           {todos.map((todo) => (
             <tr key={todo.id}>
               <td>
-                <input
-                  type="text"
-                  value={todo.name}
-                  onChange={handleEdit}
-                /></td>
-              <td>
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                >削除</button>
+                {editMode
+                ? <span onClick={handleClickName}>{todo.name}</span>
+                : <input type="text" value={todo.name} onChange={handleChangeName} />}
               </td>
               <td>
-              <button
-                  type="button"
-                  onClick={handleEdit}
-                >保存</button>
+                <button type="button" onClick={handleSave}>
+                  保存
+                </button>
+              </td>
+              <td>
+                <button type="button" onClick={handleDelete}>
+                  削除
+                </button>
               </td>
             </tr>
           ))}
@@ -89,8 +98,8 @@ export const Todo = () => {
     <>
       <div>
         <h1 id="tabelLabel">Todoリスト</h1>
-        <input type="text" onChange={handleChange} value={text}/>
-        <button onClick={handleAdd}>追加</button>
+        <input type="text" onChange={handleChangeAdd} value={text} />
+        <button onClick={handleClickAdd}>追加</button>
         {loading ? <p>Loading...</p> : renderTodoTable()}
       </div>
     </>

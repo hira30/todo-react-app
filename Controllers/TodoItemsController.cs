@@ -17,24 +17,16 @@ namespace todo_react_app.Controllers
 
         // GET: api/TodoItems
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItem()
+        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
         {
-          if (_context.TodoItem == null)
-          {
-              return NotFound();
-          }
-            return await _context.TodoItem.ToListAsync();
+            return await _context.TodoItems.ToListAsync();
         }
 
         // GET: api/TodoItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItem>> GetTodoItem(int id)
         {
-          if (_context.TodoItem == null)
-          {
-              return NotFound();
-          }
-            var todoItem = await _context.TodoItem.FindAsync(id);
+            var todoItem = await _context.TodoItems.FindAsync(id);
 
             if (todoItem == null)
             {
@@ -78,11 +70,7 @@ namespace todo_react_app.Controllers
         [HttpPost]
         public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
         {
-          if (_context.TodoItem == null)
-          {
-              return Problem("Entity set 'TodoContext.TodoItem'  is null.");
-          }
-            _context.TodoItem.Add(todoItem);
+            _context.TodoItems.Add(todoItem);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetTodoItem", new { id = todoItem.Id }, todoItem);
@@ -92,18 +80,13 @@ namespace todo_react_app.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(int id)
         {
-            if (_context.TodoItem == null)
-            {
-                return NotFound();
-            }
-
-            var todoItem = await _context.TodoItem.FindAsync(id);
+            var todoItem = await _context.TodoItems.FindAsync(id);
             if (todoItem == null)
             {
                 return NotFound();
             }
 
-            _context.TodoItem.Remove(todoItem);
+            _context.TodoItems.Remove(todoItem);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -111,7 +94,7 @@ namespace todo_react_app.Controllers
 
         private bool TodoItemExists(int id)
         {
-            return (_context.TodoItem?.Any(e => e.Id == id)).GetValueOrDefault();
+            return _context.TodoItems.Any(e => e.Id == id);
         }
     }
 }
