@@ -1,4 +1,5 @@
 import { useState, useEffect, ChangeEvent } from "react";
+import axios, { AxiosError } from "axios";
 
 type TodoItem = {
   id: number;
@@ -35,9 +36,7 @@ export const Todo = () => {
   };
 
   // 保存ボタンクリック時（サーバー側にPOST）
-  const handleSave = () => {
-
-  }
+  const handleSave = () => {};
 
   // 削除ボタンクリック（サーバー側にPOST）
   const handleDelete = () => {
@@ -47,14 +46,16 @@ export const Todo = () => {
   // ページ表示時にWeb APIからデータを取得する
   useEffect(() => {
     async function fetchTodoData() {
-      try {
-        const response = await fetch("api/todo");
-        const data = await response.json();
-        setTodos(data);
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
+      await axios
+        .get("api/todoitems")
+        .then((response) => {
+          console.log(response);
+          // setTodos(...response);
+        })
+        .catch((e: AxiosError) => {
+          console.error(e);
+        });
+      setLoading(false);
     }
     fetchTodoData();
   }, []);
@@ -73,9 +74,15 @@ export const Todo = () => {
           {todos.map((todo) => (
             <tr key={todo.id}>
               <td>
-                {editMode
-                ? <span onClick={handleClickName}>{todo.name}</span>
-                : <input type="text" value={todo.name} onChange={handleChangeName} />}
+                {editMode ? (
+                  <span onClick={handleClickName}>{todo.name}</span>
+                ) : (
+                  <input
+                    type="text"
+                    value={todo.name}
+                    onChange={handleChangeName}
+                  />
+                )}
               </td>
               <td>
                 <button type="button" onClick={handleSave}>

@@ -3,9 +3,8 @@ using todo_react_app.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// builder.Services.AddDbContext<TodoContext>(options =>
-//     options.UseSqlServer(builder.Configuration.GetConnectionString("TodoContext") ??
-//     throw new InvalidOperationException("Connection string 'TodoContext' not found.")));
+builder.Services.AddControllersWithViews();
+
 builder.Services.AddDbContext<TodoContext>(options =>
         options.UseSqlite(builder.Configuration.GetConnectionString("TodoContext")));
 
@@ -19,6 +18,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");;
 
