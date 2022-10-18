@@ -3,7 +3,7 @@ using todo_react_app.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 
 builder.Services.AddDbContext<TodoContext>(options =>
         options.UseSqlite(builder.Configuration.GetConnectionString("TodoContext")));
@@ -19,9 +19,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
+app.MapControllers();
 
 app.MapFallbackToFile("index.html");;
 
