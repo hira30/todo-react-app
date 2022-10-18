@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace todo_react_app.Models;
 
