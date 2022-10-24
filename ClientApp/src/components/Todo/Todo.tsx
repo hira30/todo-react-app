@@ -1,8 +1,8 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 type TodoItem = {
-  id: number;
+  id?: number;
   name: string;
   isComplete: boolean;
 };
@@ -13,44 +13,89 @@ export const Todo = () => {
   const [text, setText] = useState("");
   const [editMode, setEditMode] = useState(false);
 
-  // Todoの追加ボタンクリック時
-  const handleClickAdd = () => {
-    const newId = todos.length + 1;
-    setTodos([...todos, { id: newId, name: text, isComplete: false }]);
+  // 追加ボタンクリック
+  const handleClickAdd = async () => {
+    const newTodo = { name: text, isComplete: false };
+
+    await axios
+      .post("api/todoitems", newTodo)
+      .then((response: AxiosResponse<TodoItem>) => {
+        const { data } = response;
+        setTodos([...todos, data]);
+      })
+      .catch((e: AxiosError) => {
+        console.error(e);
+      });
     setText("");
   };
 
-  // Todoの追加テキストボックス変更時
+  // 追加テキストボックス変更時
   const handleChangeAdd = (e: ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
 
-  // Todo名をクリックすると編集モードに
+  // 編集モード
   const handleClickName = () => {
     setEditMode(true);
   };
 
-  // Todo名を変更時
-  const handleChangeName = () => {
-    console.log(`変更されたID:`);
+  // アイテム名変更時
+  const handleChangeName = (name: string, id?: number) => {
+    const newTodos = todos.map((todo) => {
+      if (todo.id === id) {
+        todo.name = name;
+      }
+      return todo;
+    });
+    setTodos(newTodos);
   };
 
-  // 保存ボタンクリック時（サーバー側にPOST）
-  const handleSave = () => {};
-
-  // 削除ボタンクリック（サーバー側にPOST）
-  const handleDelete = () => {
-    console.log(`ID:`);
+  // ステータス変更
+  const handleChangeStatus = (id?: number) => {
+    const newTodos = todos.map((todo) => {
+      if (todo.id === id) {
+        todo.isComplete = !todo.isComplete;
+      }
+      return todo;
+    });
+    setTodos(newTodos);
   };
 
-  // ページ表示時にWeb APIからデータを取得する
+  // 保存ボタンクリック時
+  const handleSave = async (id?: number) => {
+    const targetTodo = todos.filter((todo) => todo.id === id)[0];
+
+    await axios
+      .put(`api/todoitems/${id}`, targetTodo)
+      .then(() => {
+        setTodos(todos);
+      })
+      .catch((e: AxiosError) => {
+        console.error(e);
+      });
+  };
+
+  // 削除ボタンクリック
+  const handleDelete = async (id?: number) => {
+    await axios
+      .delete(`api/todoitems/${id}`)
+      .then(() => {
+        setTodos(todos.filter((todo) => todo.id !== id));
+      })
+      .catch((e: AxiosError) => {
+        console.error(e);
+      });
+  };
+
+  // ページ表示時にAPIからデータを取得する
   useEffect(() => {
     async function fetchTodoData() {
       await axios
         .get("api/todoitems")
-        .then((response) => {
+        .then((response: AxiosResponse<TodoItem[]>) => {
           console.log(response);
-          // setTodos(...response);
+          const { data } = response;
+          setTodos([...todos, ...data]);
         })
         .catch((e: AxiosError) => {
           console.error(e);
@@ -65,8 +110,8 @@ export const Todo = () => {
       <table>
         <thead>
           <tr>
-            <th>タイトル</th>
-            <th>完了</th>
+            <th>アイテム</th>
+            <th>ステータス</th>
             <th></th>
           </tr>
         </thead>
@@ -74,23 +119,34 @@ export const Todo = () => {
           {todos.map((todo) => (
             <tr key={todo.id}>
               <td>
-                {editMode ? (
+                {!editMode ? (
                   <span onClick={handleClickName}>{todo.name}</span>
                 ) : (
                   <input
                     type="text"
                     value={todo.name}
-                    onChange={handleChangeName}
+                    onChange={() => {
+                      handleChangeName(todo.name, todo.id);
+                    }}
                   />
                 )}
               </td>
               <td>
-                <button type="button" onClick={handleSave}>
+                <input
+                  type="checkbox"
+                  checked={todo.isComplete}
+                  onChange={(e) => {
+                    handleChangeStatus(todo.id);
+                  }}
+                />
+              </td>
+              <td>
+                <button type="button" onClick={() => handleSave(todo.id)}>
                   保存
                 </button>
               </td>
               <td>
-                <button type="button" onClick={handleDelete}>
+                <button type="button" onClick={() => handleDelete(todo.id)}>
                   削除
                 </button>
               </td>
