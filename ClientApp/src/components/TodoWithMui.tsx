@@ -1,27 +1,23 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import {
-  Checkbox,
-  Fab,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  TextField,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { TodoInput } from "./TodoInput";
+import { TodoList } from "./TodoList";
 
-type TodoItem = {
+export type TodoItem = {
   id?: number;
   name: string;
   isComplete: boolean;
 };
 
-// MUI適用＆コンポーネント分割前
+// MUI適用＆コンポーネント分割後
 export const Todo = () => {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [text, setText] = useState("");
+
+  // テキストボックス変更
+  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+  };
 
   // 追加ボタンクリック
   const handleAdd = async () => {
@@ -37,11 +33,6 @@ export const Todo = () => {
         console.error(e);
       });
     setText("");
-  };
-
-  // テキストボックス変更
-  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value);
   };
 
   // ステータス変更
@@ -95,50 +86,13 @@ export const Todo = () => {
 
   return (
     <div>
-      <h1 id="tabelLabel">Todoリスト</h1>
-      <TextField
-        sx={{ width: "100%", maxWidth: 280, marginRight: 1 }}
-        size="small"
-        variant="outlined"
-        onChange={handleChangeInput}
-        value={text}
+      <h1>Todoリスト</h1>
+      <TodoInput text={text} onChange={handleChangeInput} onClick={handleAdd} />
+      <TodoList
+        todos={todos}
+        onChange={handleChangeStatus}
+        onClick={handleDelete}
       />
-      <Fab size="small" color="primary" onClick={handleAdd}>
-        <AddIcon />
-      </Fab>
-
-      <List sx={{ width: "100%", maxWidth: 300 }}>
-        {todos.map((todo) => {
-          return (
-            <ListItem key={todo.id} disablePadding>
-              <ListItemButton>
-                <Checkbox
-                  checked={todo.isComplete}
-                  onChange={() => {
-                    handleChangeStatus(todo.id);
-                  }}
-                />
-                <ListItemText>
-                  {todo.isComplete ? (
-                    <span style={{ textDecorationLine: "line-through" }}>
-                      {todo.name}
-                    </span>
-                  ) : (
-                    <span>{todo.name}</span>
-                  )}
-                </ListItemText>
-                <Fab
-                  size="small"
-                  color="error"
-                  onClick={() => handleDelete(todo.id)}
-                >
-                  <DeleteIcon />
-                </Fab>
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
     </div>
   );
 };

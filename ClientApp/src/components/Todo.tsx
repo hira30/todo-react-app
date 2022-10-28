@@ -1,21 +1,25 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { TodoInput } from "./TodoInput";
-import { TodoList } from "./TodoList";
 
-export type TodoItem = {
+type TodoItem = {
   id?: number;
   name: string;
   isComplete: boolean;
 };
 
-// MUI適用＆コンポーネント分割後
+// Todoコンポーネント
 export const Todo = () => {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [text, setText] = useState("");
 
-  // 追加ボタンクリック
+  // テキストボックス入力時の処理
+  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+  };
+
+  // 追加ボタンクリック時の処理
   const handleAdd = async () => {
+    // 新しいTodoアイテムオブジェクトを作成（idはDB側で自動採番するため省略）
     const newTodo = { name: text, isComplete: false };
 
     await axios
@@ -30,13 +34,9 @@ export const Todo = () => {
     setText("");
   };
 
-  // テキストボックス変更
-  const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value);
-  };
-
-  // ステータス変更
+  // 完了ステータス変更時の処理
   const handleChangeStatus = async (id?: number) => {
+    // 対象のTodoアイテムの完了フラグを反転する
     const newTodos = todos.map((todo) => {
       if (todo.id === id) {
         todo.isComplete = !todo.isComplete;
@@ -44,6 +44,7 @@ export const Todo = () => {
       return todo;
     });
 
+    // 更新対象のTodoアイテムを取得
     const targetTodo = newTodos.filter((todo) => todo.id === id)[0];
 
     await axios
@@ -56,7 +57,7 @@ export const Todo = () => {
       });
   };
 
-  // 削除ボタンクリック
+  // 削除ボタンクリック時の処理
   const handleDelete = async (id?: number) => {
     await axios
       .delete(`api/todoitems/${id}`)
@@ -68,8 +69,9 @@ export const Todo = () => {
       });
   };
 
-  // ページ表示時にAPIからデータを取得する
+  // ページ初期表示時の処理
   useEffect(() => {
+    // APIからTodoデータを取得してstateに格納する
     async function fetchTodoData() {
       await axios
         .get("api/todoitems")
@@ -86,13 +88,30 @@ export const Todo = () => {
 
   return (
     <div>
-      <h1 id="tabelLabel">Todoリスト</h1>
-      <TodoInput text={text} onChange={handleChangeInput} onClick={handleAdd} />
-      <TodoList
-        todos={todos}
-        onChange={handleChangeStatus}
-        onClick={handleDelete}
-      />
+      <h1>Todoリスト</h1>
+      <input type="text" onChange={handleChangeInput} value={text} />
+      <button onClick={handleAdd}>追加</button>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            <input
+              type="checkbox"
+              checked={todo.isComplete}
+              onChange={() => {
+                handleChangeStatus(todo.id);
+              }}
+            />
+            {todo.isComplete ? (
+              <span style={{ textDecorationLine: "line-through" }}>
+                {todo.name}
+              </span>
+            ) : (
+              <span>{todo.name}</span>
+            )}
+            <button onClick={() => handleDelete(todo.id)}>削除</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
