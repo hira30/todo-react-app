@@ -12,7 +12,7 @@ export const TodoInput = ({ text, onChange, onClick }: Props) => {
   return (
     <>
       <TextField
-        sx={{ width: "100%", maxWidth: 280, marginRight: 1 }}
+        sx={{ width: "100%", maxWidth: 270, marginRight: 2, marginBottom: 2 }}
         size="small"
         variant="outlined"
         onChange={onChange}

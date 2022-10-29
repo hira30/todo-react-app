@@ -7,7 +7,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { TodoItem } from "./TodoWithMui";
+import { TodoItem } from "./Todo";
 
 type Props = {
   todos: TodoItem[];
@@ -17,7 +17,7 @@ type Props = {
 
 export const TodoList = ({ todos, onChange, onClick }: Props) => {
   return (
-    <List sx={{ width: "100%", maxWidth: 300 }}>
+    <List sx={{ width: "100%", maxWidth: 300, marginInline: "auto" }}>
       {todos.map((todo) => {
         return (
           <ListItem key={todo.id} disablePadding>

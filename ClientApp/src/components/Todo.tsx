@@ -1,18 +1,20 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
+import { TodoInput } from "./TodoInput";
+import { TodoList } from "./TodoList";
 
-type TodoItem = {
+export type TodoItem = {
   id?: number;
   name: string;
   isComplete: boolean;
 };
 
-// Todoコンポーネント
+// MUI適用＆コンポーネント分割後
 export const Todo = () => {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [text, setText] = useState("");
 
-  // テキストボックス入力時の処理
+  // テキストボックス変更
   const handleChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
@@ -87,31 +89,14 @@ export const Todo = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ textAlign: "center" }}>
       <h1>Todoリスト</h1>
-      <input type="text" onChange={handleChangeInput} value={text} />
-      <button onClick={handleAdd}>追加</button>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>
-            <input
-              type="checkbox"
-              checked={todo.isComplete}
-              onChange={() => {
-                handleChangeStatus(todo.id);
-              }}
-            />
-            {todo.isComplete ? (
-              <span style={{ textDecorationLine: "line-through" }}>
-                {todo.name}
-              </span>
-            ) : (
-              <span>{todo.name}</span>
-            )}
-            <button onClick={() => handleDelete(todo.id)}>削除</button>
-          </li>
-        ))}
-      </ul>
+      <TodoInput text={text} onChange={handleChangeInput} onClick={handleAdd} />
+      <TodoList
+        todos={todos}
+        onChange={handleChangeStatus}
+        onClick={handleDelete}
+      />
     </div>
   );
 };
