@@ -92,7 +92,7 @@ export const Todo = () => {
       } catch (e) {
         console.error(e);
       }
-    }
+    };
     // 関数の実行
     fetchTodoData();
   }, []);

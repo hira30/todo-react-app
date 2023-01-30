@@ -15,6 +15,7 @@ type Props = {
   onClick: (id?: number) => Promise<void>;
 };
 
+// アイテムをリスト表示するコンポーネント
 export const TodoList = ({ todos, onChange, onClick }: Props) => {
   return (
     <List sx={{ width: "100%", maxWidth: 300, marginInline: "auto" }}>

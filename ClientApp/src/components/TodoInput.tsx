@@ -8,6 +8,7 @@ type Props = {
   onClick: () => Promise<void>;
 };
 
+// インプットボックスとボタンのコンポーネント
 export const TodoInput = ({ text, onChange, onClick }: Props) => {
   return (
     <>
